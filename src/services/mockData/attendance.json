@@ -1,0 +1,72 @@
+[
+  {
+    "Id": 1,
+    "studentId": 1,
+    "date": "2024-12-01",
+    "status": "present",
+    "notes": ""
+  },
+  {
+    "Id": 2,
+    "studentId": 2,
+    "date": "2024-12-01",
+    "status": "present",
+    "notes": ""
+  },
+  {
+    "Id": 3,
+    "studentId": 3,
+    "date": "2024-12-01",
+    "status": "late",
+    "notes": "Arrived 15 minutes late"
+  },
+  {
+    "Id": 4,
+    "studentId": 4,
+    "date": "2024-12-01",
+    "status": "present",
+    "notes": ""
+  },
+  {
+    "Id": 5,
+    "studentId": 5,
+    "date": "2024-12-01",
+    "status": "absent",
+    "notes": "Sick"
+  },
+  {
+    "Id": 6,
+    "studentId": 1,
+    "date": "2024-11-30",
+    "status": "present",
+    "notes": ""
+  },
+  {
+    "Id": 7,
+    "studentId": 2,
+    "date": "2024-11-30",
+    "status": "present",
+    "notes": ""
+  },
+  {
+    "Id": 8,
+    "studentId": 3,
+    "date": "2024-11-30",
+    "status": "present",
+    "notes": ""
+  },
+  {
+    "Id": 9,
+    "studentId": 4,
+    "date": "2024-11-30",
+    "status": "excused",
+    "notes": "Doctor appointment"
+  },
+  {
+    "Id": 10,
+    "studentId": 5,
+    "date": "2024-11-30",
+    "status": "present",
+    "notes": ""
+  }
+]

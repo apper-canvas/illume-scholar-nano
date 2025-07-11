@@ -1,0 +1,37 @@
+[
+  {
+    "Id": 1,
+    "name": "Advanced Mathematics",
+    "subject": "Math",
+    "room": "Room 101",
+    "schedule": "Mon, Wed, Fri 9:00 AM"
+  },
+  {
+    "Id": 2,
+    "name": "Biology Fundamentals",
+    "subject": "Science",
+    "room": "Room 203",
+    "schedule": "Tue, Thu 10:30 AM"
+  },
+  {
+    "Id": 3,
+    "name": "English Literature",
+    "subject": "English",
+    "room": "Room 105",
+    "schedule": "Mon, Wed, Fri 2:00 PM"
+  },
+  {
+    "Id": 4,
+    "name": "World History",
+    "subject": "History",
+    "room": "Room 207",
+    "schedule": "Tue, Thu 1:00 PM"
+  },
+  {
+    "Id": 5,
+    "name": "Chemistry Lab",
+    "subject": "Science",
+    "room": "Lab 301",
+    "schedule": "Wed, Fri 11:00 AM"
+  }
+]

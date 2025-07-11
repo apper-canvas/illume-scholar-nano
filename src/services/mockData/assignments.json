@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "title": "Quadratic Equations Practice",
+    "description": "Complete exercises 1-20 on quadratic equations",
+    "subject": "Math",
+    "classId": 1,
+    "dueDate": "2024-12-15T23:59:00",
+    "points": 50,
+    "type": "homework"
+  },
+  {
+    "Id": 2,
+    "title": "Cell Division Lab Report",
+    "description": "Write a detailed lab report on mitosis and meiosis",
+    "subject": "Science",
+    "classId": 2,
+    "dueDate": "2024-12-20T23:59:00",
+    "points": 100,
+    "type": "project"
+  },
+  {
+    "Id": 3,
+    "title": "Shakespeare Essay",
+    "description": "Write a 5-paragraph essay analyzing themes in Hamlet",
+    "subject": "English",
+    "classId": 3,
+    "dueDate": "2024-12-18T23:59:00",
+    "points": 150,
+    "type": "project"
+  },
+  {
+    "Id": 4,
+    "title": "World War II Timeline",
+    "description": "Create a detailed timeline of major WWII events",
+    "subject": "History",
+    "classId": 4,
+    "dueDate": "2024-12-12T23:59:00",
+    "points": 75,
+    "type": "project"
+  },
+  {
+    "Id": 5,
+    "title": "Chemistry Quiz #3",
+    "description": "Quiz covering atomic structure and periodic table",
+    "subject": "Science",
+    "classId": 5,
+    "dueDate": "2024-12-08T14:00:00",
+    "points": 25,
+    "type": "quiz"
+  },
+  {
+    "Id": 6,
+    "title": "Trigonometry Test",
+    "description": "Comprehensive test on trigonometric functions",
+    "subject": "Math",
+    "classId": 1,
+    "dueDate": "2024-12-22T10:00:00",
+    "points": 200,
+    "type": "test"
+  },
+  {
+    "Id": 7,
+    "title": "Reading Assignment Ch 8-10",
+    "description": "Read chapters 8-10 and complete comprehension questions",
+    "subject": "English",
+    "classId": 3,
+    "dueDate": "2024-12-10T23:59:00",
+    "points": 30,
+    "type": "homework"
+  },
+  {
+    "Id": 8,
+    "title": "Genetics Problem Set",
+    "description": "Complete genetics probability problems",
+    "subject": "Science",
+    "classId": 2,
+    "dueDate": "2024-12-14T23:59:00",
+    "points": 40,
+    "type": "homework"
+  }
+]

@@ -1,0 +1,112 @@
+[
+  {
+    "Id": 1,
+    "studentId": 1,
+    "subject": "Math",
+    "assignmentName": "Algebra Quiz #1",
+    "score": 85,
+    "maxScore": 100,
+    "weight": 1.0,
+    "date": "2024-11-25",
+    "type": "quiz"
+  },
+  {
+    "Id": 2,
+    "studentId": 1,
+    "subject": "Math",
+    "assignmentName": "Homework Set 3",
+    "score": 92,
+    "maxScore": 100,
+    "weight": 0.5,
+    "date": "2024-11-20",
+    "type": "homework"
+  },
+  {
+    "Id": 3,
+    "studentId": 2,
+    "subject": "Science",
+    "assignmentName": "Lab Report #2",
+    "score": 78,
+    "maxScore": 100,
+    "weight": 1.5,
+    "date": "2024-11-28",
+    "type": "project"
+  },
+  {
+    "Id": 4,
+    "studentId": 2,
+    "subject": "Math",
+    "assignmentName": "Algebra Quiz #1",
+    "score": 91,
+    "maxScore": 100,
+    "weight": 1.0,
+    "date": "2024-11-25",
+    "type": "quiz"
+  },
+  {
+    "Id": 5,
+    "studentId": 3,
+    "subject": "English",
+    "assignmentName": "Essay Assignment",
+    "score": 88,
+    "maxScore": 100,
+    "weight": 2.0,
+    "date": "2024-11-22",
+    "type": "project"
+  },
+  {
+    "Id": 6,
+    "studentId": 3,
+    "subject": "Math",
+    "assignmentName": "Algebra Quiz #1",
+    "score": 76,
+    "maxScore": 100,
+    "weight": 1.0,
+    "date": "2024-11-25",
+    "type": "quiz"
+  },
+  {
+    "Id": 7,
+    "studentId": 4,
+    "subject": "Science",
+    "assignmentName": "Chapter 5 Test",
+    "score": 94,
+    "maxScore": 100,
+    "weight": 2.0,
+    "date": "2024-11-30",
+    "type": "test"
+  },
+  {
+    "Id": 8,
+    "studentId": 4,
+    "subject": "Math",
+    "assignmentName": "Homework Set 3",
+    "score": 87,
+    "maxScore": 100,
+    "weight": 0.5,
+    "date": "2024-11-20",
+    "type": "homework"
+  },
+  {
+    "Id": 9,
+    "studentId": 5,
+    "subject": "English",
+    "assignmentName": "Reading Quiz",
+    "score": 82,
+    "maxScore": 100,
+    "weight": 1.0,
+    "date": "2024-11-26",
+    "type": "quiz"
+  },
+  {
+    "Id": 10,
+    "studentId": 5,
+    "subject": "Science",
+    "assignmentName": "Lab Report #2",
+    "score": 89,
+    "maxScore": 100,
+    "weight": 1.5,
+    "date": "2024-11-28",
+    "type": "project"
+  }
+]
