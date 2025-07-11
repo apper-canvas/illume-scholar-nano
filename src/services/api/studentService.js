@@ -23,10 +23,10 @@ class StudentService {
 
   async create(studentData) {
     await delay(400);
-    const newStudent = {
+const newStudent = {
       Id: Math.max(...this.students.map(s => s.Id)) + 1,
       ...studentData,
-      photoUrl: ""
+      photoUrl: studentData.photoUrl || ""
     };
     this.students.push(newStudent);
     return { ...newStudent };

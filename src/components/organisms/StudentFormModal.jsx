@@ -2,11 +2,12 @@ import { useState } from "react";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import Label from "@/components/atoms/Label";
+import PhotoUpload from "@/components/atoms/PhotoUpload";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
 const StudentFormModal = ({ student, onClose, onSave }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     firstName: student?.firstName || "",
     lastName: student?.lastName || "",
     email: student?.email || "",
@@ -16,7 +17,8 @@ const StudentFormModal = ({ student, onClose, onSave }) => {
     parentEmail: student?.parentEmail || "",
     parentPhone: student?.parentPhone || "",
     status: student?.status || "active",
-    enrollmentDate: student?.enrollmentDate || new Date().toISOString().split("T")[0]
+    enrollmentDate: student?.enrollmentDate || new Date().toISOString().split("T")[0],
+    photoUrl: student?.photoUrl || ""
   });
 
   const handleSubmit = (e) => {
@@ -147,8 +149,16 @@ const StudentFormModal = ({ student, onClose, onSave }) => {
               onChange={handleChange}
               required
             />
-          </div>
+</div>
 
+          <div>
+            <Label htmlFor="photo">Student Photo</Label>
+            <PhotoUpload
+              value={formData.photoUrl}
+              onChange={(photoUrl) => setFormData(prev => ({ ...prev, photoUrl }))}
+              className="mt-2"
+            />
+          </div>
           <div className="border-t border-gray-200 pt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Parent/Guardian Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
