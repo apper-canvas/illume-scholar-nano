@@ -15,9 +15,9 @@ const AttendanceCalendar = ({ students, attendance, onMarkAttendance }) => {
   const monthEnd = endOfMonth(currentDate);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  const getAttendanceForDate = (studentId, date) => {
+const getAttendanceForDate = (studentId, date) => {
     return attendance.find(att => 
-      att.studentId === studentId && 
+      att.student_id === studentId && 
       isSameDay(new Date(att.date), date)
     );
   };
@@ -52,14 +52,14 @@ const handleMarkAttendance = async (studentId, status) => {
     // Send notification email for absences
     if (status === 'absent') {
       try {
-        const student = students.find(s => s.Id === studentId);
+const student = students.find(s => s.Id === studentId);
         if (student) {
           const emailData = {
-            to: student.parentEmail,
-            subject: `Attendance Alert for ${student.firstName} ${student.lastName}`,
-            body: `Your child ${student.firstName} ${student.lastName} was marked absent on ${format(selectedDate, 'MMMM d, yyyy')}.`,
+            to: student.parent_email,
+            subject: `Attendance Alert for ${student.first_name} ${student.last_name}`,
+            body: `Your child ${student.first_name} ${student.last_name} was marked absent on ${format(selectedDate, 'MMMM d, yyyy')}.`,
             type: 'attendance_alert',
-            studentId: studentId,
+            student_id: studentId,
             date: selectedDate.toISOString().split('T')[0]
           };
           
@@ -152,16 +152,16 @@ const handleMarkAttendance = async (studentId, status) => {
                 return (
                   <div key={student.Id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary to-blue-600 rounded-full flex items-center justify-center">
+<div className="w-8 h-8 bg-gradient-to-r from-primary to-blue-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-medium text-xs">
-                          {student.firstName[0]}{student.lastName[0]}
+                          {student.first_name[0]}{student.last_name[0]}
                         </span>
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 text-sm">
-                          {student.firstName} {student.lastName}
+                          {student.first_name} {student.last_name}
                         </p>
-                        <p className="text-xs text-gray-600">Grade {student.gradeLevel}</p>
+                        <p className="text-xs text-gray-600">Grade {student.grade_level}</p>
                       </div>
                     </div>
                     

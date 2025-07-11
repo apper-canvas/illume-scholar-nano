@@ -91,13 +91,13 @@ const StudentTable = ({ students, onEdit, onDelete }) => {
                 <td className="p-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-r from-primary to-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium text-sm">
-                        {student.firstName[0]}{student.lastName[0]}
+<span className="text-white font-medium text-sm">
+                        {student.first_name[0]}{student.last_name[0]}
                       </span>
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">
-                        {student.firstName} {student.lastName}
+                        {student.first_name} {student.last_name}
                       </p>
                       <p className="text-sm text-gray-600">{student.phone}</p>
                     </div>
@@ -107,7 +107,7 @@ const StudentTable = ({ students, onEdit, onDelete }) => {
                   <p className="text-gray-900">{student.email}</p>
                 </td>
                 <td className="p-4">
-                  <Badge variant="primary">Grade {student.gradeLevel}</Badge>
+                  <Badge variant="primary">Grade {student.grade_level}</Badge>
                 </td>
                 <td className="p-4">
                   <Badge variant={getStatusVariant(student.status)}>
@@ -116,8 +116,8 @@ const StudentTable = ({ students, onEdit, onDelete }) => {
                 </td>
                 <td className="p-4">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{student.parentName}</p>
-                    <p className="text-xs text-gray-600">{student.parentEmail}</p>
+                    <p className="text-sm font-medium text-gray-900">{student.parent_name}</p>
+<p className="text-xs text-gray-600">{student.parent_email}</p>
                   </div>
                 </td>
                 <td className="p-4">

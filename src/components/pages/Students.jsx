@@ -44,11 +44,11 @@ const Students = () => {
       return;
     }
     
-    const filtered = students.filter(student =>
-      student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+const filtered = students.filter(student =>
+      student.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.gradeLevel.toLowerCase().includes(searchTerm.toLowerCase())
+      student.grade_level.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredStudents(filtered);
   };
@@ -162,11 +162,11 @@ return (
 
       {showEmailComposer && (
         <EmailComposer
-          recipients={filteredStudents.map(s => ({
+recipients={filteredStudents.map(s => ({
             id: s.Id,
-            name: `${s.firstName} ${s.lastName}`,
-            email: s.parentEmail,
-            parentName: s.parentName
+            name: `${s.first_name} ${s.last_name}`,
+            email: s.parent_email,
+            parentName: s.parent_name
           }))}
           onClose={handleEmailComposerClose}
         />

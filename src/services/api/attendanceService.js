@@ -1,77 +1,208 @@
-import attendanceData from "@/services/mockData/attendance.json";
 import emailService from "@/services/api/emailService";
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class AttendanceService {
   constructor() {
-    this.attendance = [...attendanceData];
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
   }
 
   async getAll() {
-    await delay(300);
-    return [...this.attendance];
+    try {
+      const params = {
+        "fields": [
+          { "field": { "Name": "Name" } },
+          { "field": { "Name": "date" } },
+          { "field": { "Name": "status" } },
+          { "field": { "Name": "notes" } },
+          { "field": { "Name": "student_id" } }
+        ]
+      };
+
+      const response = await this.apperClient.fetchRecords("attendance", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+      
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching attendance:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
+    }
   }
 
   async getById(id) {
-    await delay(200);
-    const record = this.attendance.find(a => a.Id === id);
-    if (!record) {
-      throw new Error("Attendance record not found");
+    try {
+      const params = {
+        "fields": [
+          { "field": { "Name": "Name" } },
+          { "field": { "Name": "date" } },
+          { "field": { "Name": "status" } },
+          { "field": { "Name": "notes" } },
+          { "field": { "Name": "student_id" } }
+        ]
+      };
+
+      const response = await this.apperClient.getRecordById("attendance", id, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return null;
+      }
+      
+      return response.data;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching attendance with ID ${id}:`, error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
-    return { ...record };
   }
 
-async create(attendanceData) {
-    await delay(400);
-    const newRecord = {
-      Id: Math.max(...this.attendance.map(a => a.Id)) + 1,
-      ...attendanceData
-    };
-    this.attendance.push(newRecord);
-    
-    // Trigger email notification for absence
-    if (attendanceData.status === 'absent') {
-      try {
-        await emailService.triggerAttendanceNotification(newRecord);
-      } catch (error) {
-        console.error("Failed to trigger attendance notification:", error);
+  async create(attendanceData) {
+    try {
+      const params = {
+        records: [{
+          Name: attendanceData.Name || `Attendance - ${attendanceData.date}`,
+          date: attendanceData.date,
+          status: attendanceData.status,
+          notes: attendanceData.notes,
+          student_id: parseInt(attendanceData.student_id)
+        }]
+      };
+
+      const response = await this.apperClient.createRecord("attendance", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return null;
       }
+      
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        }
+        const successfulRecords = response.results.filter(result => result.success);
+        if (successfulRecords.length > 0) {
+          const newRecord = successfulRecords[0].data;
+          // Trigger email notification for absence
+          if (attendanceData.status === 'absent') {
+            try {
+              await emailService.triggerAttendanceNotification(newRecord);
+            } catch (error) {
+              console.error("Failed to trigger attendance notification:", error);
+            }
+          }
+          return newRecord;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating attendance:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
-    
-    return { ...newRecord };
   }
 
-async update(id, attendanceData) {
-    await delay(400);
-    const index = this.attendance.findIndex(a => a.Id === id);
-    if (index === -1) {
-      throw new Error("Attendance record not found");
-    }
-    
-    const oldRecord = { ...this.attendance[index] };
-    this.attendance[index] = { ...this.attendance[index], ...attendanceData };
-    
-    // Trigger email notification if status changed to absent
-    if (oldRecord.status !== 'absent' && attendanceData.status === 'absent') {
-      try {
-        await emailService.triggerAttendanceNotification(this.attendance[index]);
-      } catch (error) {
-        console.error("Failed to trigger attendance notification:", error);
+  async update(id, attendanceData) {
+    try {
+      const oldRecord = await this.getById(id);
+      
+      const params = {
+        records: [{
+          Id: id,
+          Name: attendanceData.Name || `Attendance - ${attendanceData.date}`,
+          date: attendanceData.date,
+          status: attendanceData.status,
+          notes: attendanceData.notes,
+          student_id: parseInt(attendanceData.student_id)
+        }]
+      };
+
+      const response = await this.apperClient.updateRecord("attendance", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return null;
       }
+      
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        }
+        const successfulRecords = response.results.filter(result => result.success);
+        if (successfulRecords.length > 0) {
+          const updatedRecord = successfulRecords[0].data;
+          // Trigger email notification if status changed to absent
+          if (oldRecord && oldRecord.status !== 'absent' && attendanceData.status === 'absent') {
+            try {
+              await emailService.triggerAttendanceNotification(updatedRecord);
+            } catch (error) {
+              console.error("Failed to trigger attendance notification:", error);
+            }
+          }
+          return updatedRecord;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating attendance:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
-    
-    return { ...this.attendance[index] };
   }
 
   async delete(id) {
-    await delay(300);
-    const index = this.attendance.findIndex(a => a.Id === id);
-    if (index === -1) {
-      throw new Error("Attendance record not found");
+    try {
+      const params = {
+        RecordIds: [id]
+      };
+
+      const response = await this.apperClient.deleteRecord("attendance", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return false;
+      }
+      
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        if (failedRecords.length > 0) {
+          console.error(`Failed to delete ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        }
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords.length > 0;
+      }
+      
+      return false;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting attendance:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return false;
     }
-    this.attendance.splice(index, 1);
-    return true;
   }
 }
 

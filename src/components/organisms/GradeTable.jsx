@@ -22,11 +22,11 @@ const GradeTable = ({ grades, students, onEdit, onDelete, onEmailParent }) => {
     let aValue = a[sortConfig.key];
     let bValue = b[sortConfig.key];
     
-    if (sortConfig.key === "studentName") {
-      const aStudent = students.find(s => s.Id === a.studentId);
-      const bStudent = students.find(s => s.Id === b.studentId);
-      aValue = aStudent ? `${aStudent.firstName} ${aStudent.lastName}` : "";
-      bValue = bStudent ? `${bStudent.firstName} ${bStudent.lastName}` : "";
+if (sortConfig.key === "studentName") {
+      const aStudent = students.find(s => s.Id === a.student_id);
+      const bStudent = students.find(s => s.Id === b.student_id);
+      aValue = aStudent ? `${aStudent.first_name} ${aStudent.last_name}` : "";
+      bValue = bStudent ? `${bStudent.first_name} ${bStudent.last_name}` : "";
     }
     
     if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
@@ -43,24 +43,24 @@ const GradeTable = ({ grades, students, onEdit, onDelete, onEmailParent }) => {
 
   const getStudentName = (studentId) => {
     const student = students.find(s => s.Id === studentId);
-return student ? `${student.firstName} ${student.lastName}` : "Unknown";
+    return student ? `${student.first_name} ${student.last_name}` : "Unknown";
   };
 
-  const handleEmailParent = async (grade) => {
+const handleEmailParent = async (grade) => {
     try {
-      const student = students.find(s => s.Id === grade.studentId);
+      const student = students.find(s => s.Id === grade.student_id);
       if (!student) {
         toast.error("Student not found");
         return;
       }
       
       const emailData = {
-        to: student.parentEmail,
-        subject: `Grade Update for ${student.firstName} ${student.lastName}`,
-        body: `Your child ${student.firstName} ${student.lastName} received a grade of ${grade.score}/${grade.maxScore} (${Math.round((grade.score / grade.maxScore) * 100)}%) on ${grade.assignmentName} in ${grade.subject}.`,
+        to: student.parent_email,
+        subject: `Grade Update for ${student.first_name} ${student.last_name}`,
+        body: `Your child ${student.first_name} ${student.last_name} received a grade of ${grade.score}/${grade.max_score} (${Math.round((grade.score / grade.max_score) * 100)}%) on ${grade.assignment_name} in ${grade.subject}.`,
         type: 'grade_update',
-        studentId: grade.studentId,
-        gradeId: grade.Id
+        student_id: grade.student_id,
+        grade_id: grade.Id
       };
       
       await emailService.sendEmail(emailData);
@@ -72,7 +72,7 @@ return student ? `${student.firstName} ${student.lastName}` : "Unknown";
 
   const getParentEmail = (studentId) => {
     const student = students.find(s => s.Id === studentId);
-    return student?.parentEmail || "No parent email";
+    return student?.parent_email || "No parent email";
   };
 
   const SortIcon = ({ column }) => {
@@ -148,25 +148,25 @@ return student ? `${student.firstName} ${student.lastName}` : "Unknown";
             </tr>
           </thead>
           <tbody>
-            {sortedGrades.map((grade) => {
-              const percentage = Math.round((grade.score / grade.maxScore) * 100);
+{sortedGrades.map((grade) => {
+              const percentage = Math.round((grade.score / grade.max_score) * 100);
               return (
                 <tr key={grade.Id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-gradient-to-r from-primary to-blue-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-medium text-xs">
-                          {getStudentName(grade.studentId).split(" ").map(n => n[0]).join("")}
+                          {getStudentName(grade.student_id).split(" ").map(n => n[0]).join("")}
                         </span>
                       </div>
-                      <span className="font-medium text-gray-900">{getStudentName(grade.studentId)}</span>
+                      <span className="font-medium text-gray-900">{getStudentName(grade.student_id)}</span>
                     </div>
                   </td>
                   <td className="p-4">
                     <Badge variant="primary">{grade.subject}</Badge>
                   </td>
-                  <td className="p-4">
-                    <p className="font-medium text-gray-900">{grade.assignmentName}</p>
+<td className="p-4">
+                    <p className="font-medium text-gray-900">{grade.assignment_name}</p>
                   </td>
                   <td className="p-4">
                     <Badge variant="secondary">{grade.type}</Badge>
@@ -175,7 +175,7 @@ return student ? `${student.firstName} ${student.lastName}` : "Unknown";
                     <div className="flex items-center space-x-3">
                       <div>
                         <p className="font-semibold text-gray-900">
-                          {grade.score}/{grade.maxScore}
+                          {grade.score}/{grade.max_score}
                         </p>
                         <Badge variant={getGradeColor(percentage)}>
                           {percentage}%
@@ -196,8 +196,8 @@ return student ? `${student.firstName} ${student.lastName}` : "Unknown";
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        onClick={() => handleEmailParent(grade)}
-                        title={`Email parent: ${getParentEmail(grade.studentId)}`}
+onClick={() => handleEmailParent(grade)}
+                        title={`Email parent: ${getParentEmail(grade.student_id)}`}
                       >
                         <ApperIcon name="Mail" className="h-4 w-4 text-blue-500" />
                       </Button>

@@ -1,61 +1,188 @@
-import preferencesData from "@/services/mockData/notificationPreferences.json";
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 class NotificationPreferencesService {
   constructor() {
-    this.preferences = [...preferencesData];
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
   }
 
   async getAll() {
-    await delay(200);
-    return [...this.preferences];
+    try {
+      const params = {
+        "fields": [
+          { "field": { "Name": "Name" } },
+          { "field": { "Name": "parent_email" } },
+          { "field": { "Name": "grade_updates" } },
+          { "field": { "Name": "attendance_alerts" } },
+          { "field": { "Name": "assignment_deadlines" } },
+          { "field": { "Name": "general_announcements" } },
+          { "field": { "Name": "email_frequency" } }
+        ]
+      };
+
+      const response = await this.apperClient.fetchRecords("notification_preference", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+      
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching notification preferences:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
+    }
   }
 
   async getByParentEmail(parentEmail) {
-    await delay(200);
-    let preferences = this.preferences.find(p => p.parentEmail === parentEmail);
-    
-    if (!preferences) {
-      // Create default preferences for new parent
-      preferences = {
-        Id: Math.max(...this.preferences.map(p => p.Id)) + 1,
-        parentEmail,
-        gradeUpdates: true,
-        attendanceAlerts: true,
-        assignmentDeadlines: true,
-        generalAnnouncements: true,
-        emailFrequency: 'immediate'
+    try {
+      const params = {
+        "fields": [
+          { "field": { "Name": "Name" } },
+          { "field": { "Name": "parent_email" } },
+          { "field": { "Name": "grade_updates" } },
+          { "field": { "Name": "attendance_alerts" } },
+          { "field": { "Name": "assignment_deadlines" } },
+          { "field": { "Name": "general_announcements" } },
+          { "field": { "Name": "email_frequency" } }
+        ],
+        "where": [
+          {
+            "FieldName": "parent_email",
+            "Operator": "EqualTo",
+            "Values": [parentEmail]
+          }
+        ]
       };
-      this.preferences.push(preferences);
+
+      const response = await this.apperClient.fetchRecords("notification_preference", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return this.createDefaultPreferences(parentEmail);
+      }
+      
+      if (response.data && response.data.length > 0) {
+        return response.data[0];
+      } else {
+        return this.createDefaultPreferences(parentEmail);
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching preferences by parent email:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return this.createDefaultPreferences(parentEmail);
     }
-    
-    return { ...preferences };
+  }
+
+  async createDefaultPreferences(parentEmail) {
+    try {
+      const params = {
+        records: [{
+          Name: `Preferences for ${parentEmail}`,
+          parent_email: parentEmail,
+          grade_updates: true,
+          attendance_alerts: true,
+          assignment_deadlines: true,
+          general_announcements: true,
+          email_frequency: 'immediate'
+        }]
+      };
+
+      const response = await this.apperClient.createRecord("notification_preference", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return {
+          parent_email: parentEmail,
+          grade_updates: true,
+          attendance_alerts: true,
+          assignment_deadlines: true,
+          general_announcements: true,
+          email_frequency: 'immediate'
+        };
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords.length > 0 ? successfulRecords[0].data : null;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Error creating default preferences:", error);
+      return {
+        parent_email: parentEmail,
+        grade_updates: true,
+        attendance_alerts: true,
+        assignment_deadlines: true,
+        general_announcements: true,
+        email_frequency: 'immediate'
+      };
+    }
   }
 
   async update(parentEmail, preferencesData) {
-    await delay(300);
-    const index = this.preferences.findIndex(p => p.parentEmail === parentEmail);
-    
-    if (index === -1) {
-      // Create new preferences
-      const newPreferences = {
-        Id: Math.max(...this.preferences.map(p => p.Id)) + 1,
-        parentEmail,
-        ...preferencesData
-      };
-      this.preferences.push(newPreferences);
-      return { ...newPreferences };
-    } else {
-      // Update existing preferences
-      this.preferences[index] = { ...this.preferences[index], ...preferencesData };
-      return { ...this.preferences[index] };
+    try {
+      const existing = await this.getByParentEmail(parentEmail);
+      
+      if (existing && existing.Id) {
+        // Update existing preferences
+        const params = {
+          records: [{
+            Id: existing.Id,
+            Name: `Preferences for ${parentEmail}`,
+            parent_email: parentEmail,
+            grade_updates: preferencesData.grade_updates,
+            attendance_alerts: preferencesData.attendance_alerts,
+            assignment_deadlines: preferencesData.assignment_deadlines,
+            general_announcements: preferencesData.general_announcements,
+            email_frequency: preferencesData.email_frequency
+          }]
+        };
+
+        const response = await this.apperClient.updateRecord("notification_preference", params);
+        
+        if (!response.success) {
+          console.error(response.message);
+          return null;
+        }
+        
+        if (response.results) {
+          const successfulRecords = response.results.filter(result => result.success);
+          return successfulRecords.length > 0 ? successfulRecords[0].data : null;
+        }
+      } else {
+        // Create new preferences
+        return this.createDefaultPreferences(parentEmail);
+      }
+      
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating notification preferences:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
   }
 
   async getAllParentEmails() {
-    await delay(200);
-    return this.preferences.map(p => p.parentEmail);
+    try {
+      const preferences = await this.getAll();
+      return preferences.map(p => p.parent_email);
+    } catch (error) {
+      console.error("Error getting all parent emails:", error);
+      return [];
+    }
   }
 }
 
