@@ -1,4 +1,5 @@
 import assignmentsData from "@/services/mockData/assignments.json";
+import emailService from "@/services/api/emailService";
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -21,23 +22,40 @@ class AssignmentService {
     return { ...assignment };
   }
 
-  async create(assignmentData) {
+async create(assignmentData) {
     await delay(400);
     const newAssignment = {
       Id: Math.max(...this.assignments.map(a => a.Id)) + 1,
       ...assignmentData
     };
     this.assignments.push(newAssignment);
+    
+    // Trigger email notification for new assignment
+    try {
+      await emailService.triggerAssignmentNotification(newAssignment);
+    } catch (error) {
+      console.error("Failed to trigger assignment notification:", error);
+    }
+    
     return { ...newAssignment };
   }
 
-  async update(id, assignmentData) {
+async update(id, assignmentData) {
     await delay(400);
     const index = this.assignments.findIndex(a => a.Id === id);
     if (index === -1) {
       throw new Error("Assignment not found");
     }
+    
     this.assignments[index] = { ...this.assignments[index], ...assignmentData };
+    
+    // Trigger email notification for assignment update
+    try {
+      await emailService.triggerAssignmentNotification(this.assignments[index]);
+    } catch (error) {
+      console.error("Failed to trigger assignment notification:", error);
+    }
+    
     return { ...this.assignments[index] };
   }
 

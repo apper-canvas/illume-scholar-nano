@@ -49,7 +49,16 @@ class StudentService {
       throw new Error("Student not found");
     }
     this.students.splice(index, 1);
-    return true;
+return true;
+  }
+
+  async getParentEmail(studentId) {
+    await delay(200);
+    const student = this.students.find(s => s.Id === studentId);
+    if (!student) {
+      throw new Error("Student not found");
+    }
+    return student.parentEmail;
   }
 }
 

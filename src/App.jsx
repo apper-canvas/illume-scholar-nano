@@ -1,11 +1,13 @@
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import Notifications from "@/components/pages/Notifications";
+import React from "react";
 import Layout from "@/components/organisms/Layout";
+import StudentDetail from "@/components/pages/StudentDetail";
 import Dashboard from "@/components/pages/Dashboard";
 import Students from "@/components/pages/Students";
-import StudentDetail from "@/components/pages/StudentDetail";
-import Attendance from "@/components/pages/Attendance";
 import Grades from "@/components/pages/Grades";
+import Attendance from "@/components/pages/Attendance";
 import Assignments from "@/components/pages/Assignments";
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/grades" element={<Grades />} />
           <Route path="/assignments" element={<Assignments />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Routes>
       </Layout>
       <ToastContainer

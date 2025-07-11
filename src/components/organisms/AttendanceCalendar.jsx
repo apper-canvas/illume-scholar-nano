@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isSameMonth, isSameDay } from "date-fns";
+import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
+import emailService from "@/services/api/emailService";
 
 const AttendanceCalendar = ({ students, attendance, onMarkAttendance }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -44,8 +46,30 @@ const AttendanceCalendar = ({ students, attendance, onMarkAttendance }) => {
     setSelectedDate(date);
   };
 
-  const handleMarkAttendance = (studentId, status) => {
+const handleMarkAttendance = async (studentId, status) => {
     onMarkAttendance(studentId, selectedDate, status);
+    
+    // Send notification email for absences
+    if (status === 'absent') {
+      try {
+        const student = students.find(s => s.Id === studentId);
+        if (student) {
+          const emailData = {
+            to: student.parentEmail,
+            subject: `Attendance Alert for ${student.firstName} ${student.lastName}`,
+            body: `Your child ${student.firstName} ${student.lastName} was marked absent on ${format(selectedDate, 'MMMM d, yyyy')}.`,
+            type: 'attendance_alert',
+            studentId: studentId,
+            date: selectedDate.toISOString().split('T')[0]
+          };
+          
+          await emailService.sendEmail(emailData);
+          toast.info("Absence notification sent to parent");
+        }
+      } catch (error) {
+        console.error("Failed to send attendance notification:", error);
+      }
+    }
   };
 
   return (

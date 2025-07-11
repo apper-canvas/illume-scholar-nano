@@ -1,0 +1,47 @@
+[
+  {
+    "Id": 1,
+    "parentEmail": "michael.johnson@email.com",
+    "gradeUpdates": true,
+    "attendanceAlerts": true,
+    "assignmentDeadlines": true,
+    "generalAnnouncements": true,
+    "emailFrequency": "immediate"
+  },
+  {
+    "Id": 2,
+    "parentEmail": "sarah.williams@email.com",
+    "gradeUpdates": true,
+    "attendanceAlerts": true,
+    "assignmentDeadlines": false,
+    "generalAnnouncements": true,
+    "emailFrequency": "daily"
+  },
+  {
+    "Id": 3,
+    "parentEmail": "david.brown@email.com",
+    "gradeUpdates": true,
+    "attendanceAlerts": true,
+    "assignmentDeadlines": true,
+    "generalAnnouncements": false,
+    "emailFrequency": "immediate"
+  },
+  {
+    "Id": 4,
+    "parentEmail": "jennifer.davis@email.com",
+    "gradeUpdates": false,
+    "attendanceAlerts": true,
+    "assignmentDeadlines": true,
+    "generalAnnouncements": true,
+    "emailFrequency": "weekly"
+  },
+  {
+    "Id": 5,
+    "parentEmail": "robert.miller@email.com",
+    "gradeUpdates": true,
+    "attendanceAlerts": true,
+    "assignmentDeadlines": true,
+    "generalAnnouncements": true,
+    "emailFrequency": "immediate"
+  }
+]

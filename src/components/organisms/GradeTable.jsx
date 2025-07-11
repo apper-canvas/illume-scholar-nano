@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import ApperIcon from "@/components/ApperIcon";
+import emailService from "@/services/api/emailService";
 
-const GradeTable = ({ grades, students, onEdit, onDelete }) => {
+const GradeTable = ({ grades, students, onEdit, onDelete, onEmailParent }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleSort = (key) => {
@@ -41,7 +43,36 @@ const GradeTable = ({ grades, students, onEdit, onDelete }) => {
 
   const getStudentName = (studentId) => {
     const student = students.find(s => s.Id === studentId);
-    return student ? `${student.firstName} ${student.lastName}` : "Unknown";
+return student ? `${student.firstName} ${student.lastName}` : "Unknown";
+  };
+
+  const handleEmailParent = async (grade) => {
+    try {
+      const student = students.find(s => s.Id === grade.studentId);
+      if (!student) {
+        toast.error("Student not found");
+        return;
+      }
+      
+      const emailData = {
+        to: student.parentEmail,
+        subject: `Grade Update for ${student.firstName} ${student.lastName}`,
+        body: `Your child ${student.firstName} ${student.lastName} received a grade of ${grade.score}/${grade.maxScore} (${Math.round((grade.score / grade.maxScore) * 100)}%) on ${grade.assignmentName} in ${grade.subject}.`,
+        type: 'grade_update',
+        studentId: grade.studentId,
+        gradeId: grade.Id
+      };
+      
+      await emailService.sendEmail(emailData);
+      toast.success("Email sent to parent successfully");
+    } catch (error) {
+      toast.error("Failed to send email to parent");
+    }
+  };
+
+  const getParentEmail = (studentId) => {
+    const student = students.find(s => s.Id === studentId);
+    return student?.parentEmail || "No parent email";
   };
 
   const SortIcon = ({ column }) => {
@@ -157,10 +188,18 @@ const GradeTable = ({ grades, students, onEdit, onDelete }) => {
                       {new Date(grade.date).toLocaleDateString()}
                     </span>
                   </td>
-                  <td className="p-4">
+<td className="p-4">
                     <div className="flex items-center justify-center space-x-2">
                       <Button variant="ghost" size="sm" onClick={() => onEdit(grade)}>
                         <ApperIcon name="Edit" className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleEmailParent(grade)}
+                        title={`Email parent: ${getParentEmail(grade.studentId)}`}
+                      >
+                        <ApperIcon name="Mail" className="h-4 w-4 text-blue-500" />
                       </Button>
                       <Button variant="ghost" size="sm" onClick={() => onDelete(grade.Id)}>
                         <ApperIcon name="Trash2" className="h-4 w-4 text-red-500" />

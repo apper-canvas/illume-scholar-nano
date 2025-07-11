@@ -5,6 +5,7 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import studentService from "@/services/api/studentService";
 import attendanceService from "@/services/api/attendanceService";
+import emailService from "@/services/api/emailService";
 
 const Attendance = () => {
   const [students, setStudents] = useState([]);
@@ -35,7 +36,7 @@ const Attendance = () => {
     loadData();
   }, []);
 
-  const handleMarkAttendance = async (studentId, date, status) => {
+const handleMarkAttendance = async (studentId, date, status) => {
     try {
       const attendanceData = {
         studentId,
@@ -56,6 +57,28 @@ const Attendance = () => {
       } else {
         await attendanceService.create(attendanceData);
         toast.success("Attendance marked successfully");
+      }
+      
+      // Send automatic email notification for absences
+      if (status === 'absent') {
+        try {
+          const student = students.find(s => s.Id === studentId);
+          if (student && student.parentEmail) {
+            const emailData = {
+              to: student.parentEmail,
+              subject: `Attendance Alert for ${student.firstName} ${student.lastName}`,
+              body: `Your child ${student.firstName} ${student.lastName} was marked absent on ${date.toLocaleDateString()}.`,
+              type: 'attendance_alert',
+              studentId: studentId,
+              date: attendanceData.date
+            };
+            
+            await emailService.sendEmail(emailData);
+            toast.info("Absence notification sent to parent");
+          }
+        } catch (emailError) {
+          console.error("Failed to send attendance notification:", emailError);
+        }
       }
       
       loadData();

@@ -9,27 +9,32 @@ import AssignmentTable from "@/components/organisms/AssignmentTable";
 import AssignmentFormModal from "@/components/organisms/AssignmentFormModal";
 import assignmentService from "@/services/api/assignmentService";
 import classService from "@/services/api/classService";
+import studentService from "@/services/api/studentService";
+import emailService from "@/services/api/emailService";
 
 const Assignments = () => {
-  const [assignments, setAssignments] = useState([]);
+const [assignments, setAssignments] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState(null);
 
-  const loadData = async () => {
+const loadData = async () => {
     try {
       setLoading(true);
       setError("");
       
-      const [assignmentsData, classesData] = await Promise.all([
+      const [assignmentsData, classesData, studentsData] = await Promise.all([
         assignmentService.getAll(),
-        classService.getAll()
+        classService.getAll(),
+        studentService.getAll()
       ]);
       
       setAssignments(assignmentsData);
       setClasses(classesData);
+      setStudents(studentsData);
     } catch (err) {
       setError("Failed to load assignments data");
     } finally {
@@ -68,15 +73,46 @@ const Assignments = () => {
     setEditingAssignment(null);
   };
 
-  const handleAssignmentSave = async (assignmentData) => {
+const handleAssignmentSave = async (assignmentData) => {
     try {
+      let savedAssignment;
       if (editingAssignment) {
-        await assignmentService.update(editingAssignment.Id, assignmentData);
+        savedAssignment = await assignmentService.update(editingAssignment.Id, assignmentData);
         toast.success("Assignment updated successfully");
       } else {
-        await assignmentService.create(assignmentData);
+        savedAssignment = await assignmentService.create(assignmentData);
         toast.success("Assignment created successfully");
+        
+        // Send automatic email notification for new assignments
+        try {
+          const dueDate = new Date(assignmentData.dueDate);
+          const daysDiff = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
+          
+          if (daysDiff <= 7) { // Send notification for assignments due within a week
+            const activeStudents = students.filter(s => s.status === 'active');
+            
+            for (const student of activeStudents) {
+              if (student.parentEmail) {
+                const emailData = {
+                  to: student.parentEmail,
+                  subject: `New Assignment: ${assignmentData.title}`,
+                  body: `Your child ${student.firstName} ${student.lastName} has a new assignment "${assignmentData.title}" in ${assignmentData.subject}. Due date: ${dueDate.toLocaleDateString()}.`,
+                  type: 'assignment_notification',
+                  studentId: student.Id,
+                  assignmentId: savedAssignment.Id
+                };
+                
+                await emailService.sendEmail(emailData);
+              }
+            }
+            
+            toast.info("Assignment notifications sent to parents");
+          }
+        } catch (emailError) {
+          console.error("Failed to send assignment notifications:", emailError);
+        }
       }
+      
       setShowModal(false);
       setEditingAssignment(null);
       loadData();

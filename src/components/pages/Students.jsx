@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Button from "@/components/atoms/Button";
-import SearchBar from "@/components/molecules/SearchBar";
-import StudentTable from "@/components/organisms/StudentTable";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
+import EmailComposer from "@/components/organisms/EmailComposer";
 import ApperIcon from "@/components/ApperIcon";
-import studentService from "@/services/api/studentService";
+import StudentTable from "@/components/organisms/StudentTable";
 import StudentFormModal from "@/components/organisms/StudentFormModal";
+import Button from "@/components/atoms/Button";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import SearchBar from "@/components/molecules/SearchBar";
+import studentService from "@/services/api/studentService";
 
 const Students = () => {
   const [students, setStudents] = useState([]);
@@ -17,6 +18,7 @@ const Students = () => {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
+  const [showEmailComposer, setShowEmailComposer] = useState(false);
 
   const loadStudents = async () => {
     try {
@@ -92,7 +94,15 @@ const Students = () => {
       loadStudents();
     } catch (err) {
       toast.error("Failed to save student");
-    }
+}
+  };
+
+  const handleBulkEmail = () => {
+    setShowEmailComposer(true);
+  };
+
+  const handleEmailComposerClose = () => {
+    setShowEmailComposer(false);
   };
 
   if (loading) return <Loading />;
@@ -100,12 +110,18 @@ const Students = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+<div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Students</h1>
-        <Button onClick={handleAddStudent}>
-          <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
-          Add Student
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={handleBulkEmail}>
+            <ApperIcon name="Mail" className="h-4 w-4 mr-2" />
+            Email Parents
+          </Button>
+          <Button onClick={handleAddStudent}>
+            <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+            Add Student
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center justify-between">
@@ -137,14 +153,25 @@ const Students = () => {
         />
       )}
 
-      {showModal && (
+{showModal && (
         <StudentFormModal
           student={editingStudent}
           onClose={handleModalClose}
           onSave={handleStudentSave}
         />
       )}
-    </div>
+
+      {showEmailComposer && (
+        <EmailComposer
+          recipients={filteredStudents.map(s => ({
+            id: s.Id,
+            name: `${s.firstName} ${s.lastName}`,
+            email: s.parentEmail,
+            parentName: s.parentName
+          }))}
+          onClose={handleEmailComposerClose}
+        />
+      )}
   );
 };
 

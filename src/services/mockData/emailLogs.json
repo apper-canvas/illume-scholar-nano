@@ -1,0 +1,57 @@
+[
+  {
+    "Id": 1,
+    "to": "michael.johnson@email.com",
+    "subject": "Grade Update for Emma Johnson",
+    "body": "Your child Emma Johnson received a grade of 85/100 (85%) on Algebra Quiz #1 in Math.",
+    "type": "grade_update",
+    "studentId": 1,
+    "gradeId": 1,
+    "timestamp": "2024-12-01T10:30:00Z",
+    "status": "sent"
+  },
+  {
+    "Id": 2,
+    "to": "sarah.williams@email.com",
+    "subject": "Attendance Alert for Liam Williams",
+    "body": "Your child Liam Williams was marked absent on 2024-12-01.",
+    "type": "attendance_alert",
+    "studentId": 2,
+    "attendanceId": 5,
+    "timestamp": "2024-12-01T08:15:00Z",
+    "status": "sent"
+  },
+  {
+    "Id": 3,
+    "to": "david.brown@email.com",
+    "subject": "New Assignment: Quadratic Equations Practice",
+    "body": "Your child Olivia Brown has a new assignment \"Quadratic Equations Practice\" in Math. Due date: 12/15/2024.",
+    "type": "assignment_notification",
+    "studentId": 3,
+    "assignmentId": 1,
+    "timestamp": "2024-12-01T14:20:00Z",
+    "status": "sent"
+  },
+  {
+    "Id": 4,
+    "to": "jennifer.davis@email.com",
+    "subject": "Grade Update for Noah Davis",
+    "body": "Your child Noah Davis received a grade of 94/100 (94%) on Chapter 5 Test in Science.",
+    "type": "grade_update",
+    "studentId": 4,
+    "gradeId": 7,
+    "timestamp": "2024-11-30T16:45:00Z",
+    "status": "sent"
+  },
+  {
+    "Id": 5,
+    "to": "robert.miller@email.com",
+    "subject": "Grade Update for Ava Miller",
+    "body": "Your child Ava Miller received a grade of 82/100 (82%) on Reading Quiz in English.",
+    "type": "grade_update",
+    "studentId": 5,
+    "gradeId": 9,
+    "timestamp": "2024-11-26T11:20:00Z",
+    "status": "sent"
+  }
+]

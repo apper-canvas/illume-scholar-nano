@@ -9,6 +9,7 @@ import GradeTable from "@/components/organisms/GradeTable";
 import GradeFormModal from "@/components/organisms/GradeFormModal";
 import studentService from "@/services/api/studentService";
 import gradeService from "@/services/api/gradeService";
+import emailService from "@/services/api/emailService";
 
 const Grades = () => {
   const [students, setStudents] = useState([]);
@@ -68,15 +69,38 @@ const Grades = () => {
     setEditingGrade(null);
   };
 
-  const handleGradeSave = async (gradeData) => {
+const handleGradeSave = async (gradeData) => {
     try {
+      let savedGrade;
       if (editingGrade) {
-        await gradeService.update(editingGrade.Id, gradeData);
+        savedGrade = await gradeService.update(editingGrade.Id, gradeData);
         toast.success("Grade updated successfully");
       } else {
-        await gradeService.create(gradeData);
+        savedGrade = await gradeService.create(gradeData);
         toast.success("Grade added successfully");
       }
+      
+      // Send automatic email notification to parent
+      try {
+        const student = students.find(s => s.Id === gradeData.studentId);
+        if (student && student.parentEmail) {
+          const percentage = Math.round((gradeData.score / gradeData.maxScore) * 100);
+          const emailData = {
+            to: student.parentEmail,
+            subject: `Grade Update for ${student.firstName} ${student.lastName}`,
+            body: `Your child ${student.firstName} ${student.lastName} received a grade of ${gradeData.score}/${gradeData.maxScore} (${percentage}%) on ${gradeData.assignmentName} in ${gradeData.subject}.`,
+            type: 'grade_update',
+            studentId: gradeData.studentId,
+            gradeId: savedGrade.Id
+          };
+          
+          await emailService.sendEmail(emailData);
+          toast.info("Grade notification sent to parent");
+        }
+      } catch (emailError) {
+        console.error("Failed to send grade notification:", emailError);
+      }
+      
       setShowModal(false);
       setEditingGrade(null);
       loadData();
