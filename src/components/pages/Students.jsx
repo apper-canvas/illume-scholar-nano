@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import EmailComposer from "@/components/organisms/EmailComposer";
 import ApperIcon from "@/components/ApperIcon";
+import EmailComposer from "@/components/organisms/EmailComposer";
 import StudentTable from "@/components/organisms/StudentTable";
 import StudentFormModal from "@/components/organisms/StudentFormModal";
 import Button from "@/components/atoms/Button";
@@ -89,14 +89,13 @@ const Students = () => {
         await studentService.create(studentData);
         toast.success("Student created successfully");
       }
-      setShowModal(false);
+setShowModal(false);
       setEditingStudent(null);
       loadStudents();
     } catch (err) {
       toast.error("Failed to save student");
-}
+    }
   };
-
   const handleBulkEmail = () => {
     setShowEmailComposer(true);
   };
@@ -108,9 +107,9 @@ const Students = () => {
   if (loading) return <Loading />;
   if (error) return <Error message={error} onRetry={loadStudents} />;
 
-  return (
+return (
     <div className="space-y-6">
-<div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Students</h1>
         <div className="flex items-center space-x-2">
           <Button variant="outline" onClick={handleBulkEmail}>
@@ -151,9 +150,9 @@ const Students = () => {
           onEdit={handleEditStudent}
           onDelete={handleDeleteStudent}
         />
-      )}
+)}
 
-{showModal && (
+      {showModal && (
         <StudentFormModal
           student={editingStudent}
           onClose={handleModalClose}
@@ -172,6 +171,7 @@ const Students = () => {
           onClose={handleEmailComposerClose}
         />
       )}
+    </div>
   );
 };
 
